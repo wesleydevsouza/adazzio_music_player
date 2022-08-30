@@ -1,6 +1,7 @@
 🎵 Adazzio Music Player
 
 🎨 Player UI Design made by: Deborah Ellen Bastos
+https://www.linkedin.com/in/deborah-ellen-bastos/
 
 Adazzio is a music palyer is a project for studies 
 
