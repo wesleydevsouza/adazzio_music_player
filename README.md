@@ -3,7 +3,7 @@
 🎨 Player UI Design made by: Deborah Ellen Bastos
 https://www.linkedin.com/in/deborah-ellen-bastos/
 
-Adazzio is a music palyer is a project for studies 
+Adazzio music palyer is a project for studies 
 
 Album Cover by Riot Games/Riot Music
 
