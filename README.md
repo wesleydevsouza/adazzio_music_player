@@ -1,16 +1,10 @@
-# music_player
+🎵 Adazzio Music Player
 
-A new Music Player
+🎨 Player UI Design made by: Deborah Ellen Bastos
+https://www.linkedin.com/in/deborah-ellen-bastos/
 
-## Getting Started
+Adazzio music palyer is a project for studies 
 
-This project is a starting point for a Flutter application.
+Album Cover by Riot Games/Riot Music
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+![Screenshot_20220829_152315](https://user-images.githubusercontent.com/74992013/187432012-999e5f0f-ca6a-4991-9d3d-bf7cc70e9fb4.png)
