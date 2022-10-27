@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-final bytebankTheme = ThemeData(
+final adazzioTheme = ThemeData(
   primaryColor: Colors.green[900],
   buttonTheme: ButtonThemeData(
   buttonColor: Colors.blueAccent[700],

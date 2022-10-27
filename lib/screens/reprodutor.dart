@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:just_audio/just_audio.dart';
+import 'package:on_audio_query/on_audio_query.dart';
+import 'package:rxdart/rxdart.dart';
 
 class Reprodutor extends StatefulWidget {
   const Reprodutor({Key? key}) : super(key: key);
@@ -11,13 +16,33 @@ class Reprodutor extends StatefulWidget {
   _ReprodutorState createState() => _ReprodutorState();
 }
 
-bool click = true;//heart
-bool shuf = true;//shuffle
-bool lup = true;//loop
-bool play = true; //play
+// #region Var de Controle
+bool isFav = true;
+bool isShuf = true;
+bool isLoop = true;
+bool isPlay = true;
+
+// #endregion
 
 class _ReprodutorState extends State<Reprodutor> {
+// #region Var de Controle
+  //Cor BG
+  //Color bgCor = Colors.cyanAccent;
+
+  //Player
+  final AudioPlayer _player = AudioPlayer();
+  bool isPlayerViewVisible = false;
   final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
+
+  //Playlist
+  List<SongModel> songs = [];
+  String currentSongTitle = '';
+  int currentIndex = 0;
+  final OnAudioQuery _audioQuery = OnAudioQuery();
+
+  // #endregion
+
+  
 
   @override
   void initState() {
@@ -35,9 +60,9 @@ class _ReprodutorState extends State<Reprodutor> {
     audioPlayer.dispose();
   }
 
-  Widget circularAudioPlayer(RealtimePlayingInfos realtimePlayingInfos,
-      double screenWidth) {
-    Color primaryColor = Color(0xffff37d8);
+  Widget circularAudioPlayer(
+      RealtimePlayingInfos realtimePlayingInfos, double screenWidth) {
+    Color primaryColor = Color(0xfff306c4);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -45,7 +70,8 @@ class _ReprodutorState extends State<Reprodutor> {
           radius: screenWidth / 2.2,
           backgroundColor: primaryColor,
           progressColor: Color(0xff584add),
-          percent: realtimePlayingInfos.currentPosition.inSeconds/realtimePlayingInfos.duration.inSeconds,
+          percent: realtimePlayingInfos.currentPosition.inSeconds /
+              realtimePlayingInfos.duration.inSeconds,
         ),
       ],
     );
@@ -92,7 +118,6 @@ class _ReprodutorState extends State<Reprodutor> {
                             color: Colors.white, size: 30),
                       ),
                     ),
-
                     Text('PLAYING NOW',
                         style: GoogleFonts.poiretOne(
                           fontSize: 20,
@@ -104,14 +129,14 @@ class _ReprodutorState extends State<Reprodutor> {
                     IconButton(
                       //icon: Icon(Icons.favorite_border, color: Colors.purpleAccent, size: 32),
                       icon: Icon(
-                          (click == false)
+                          (isFav == false)
                               ? Icons.favorite
                               : Icons.favorite_border,
                           color: Colors.purpleAccent,
                           size: 32),
                       onPressed: () {
                         setState(() {
-                          click = !click;
+                          isFav = !isFav;
                         });
                       },
                     ),
@@ -128,11 +153,8 @@ class _ReprodutorState extends State<Reprodutor> {
                       child: audioPlayer.builderRealtimePlayingInfos(
                         builder: (context, realtimePlayingInfos) {
                           if (realtimePlayingInfos != null) {
-                            return circularAudioPlayer(
-                                realtimePlayingInfos, MediaQuery
-                                .of(context)
-                                .size
-                                .width);
+                            return circularAudioPlayer(realtimePlayingInfos,
+                                MediaQuery.of(context).size.width);
                           } else {
                             return Container();
                           }
@@ -163,7 +185,7 @@ class _ReprodutorState extends State<Reprodutor> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            shuf = !shuf;
+                            isShuf = !isShuf;
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -176,7 +198,7 @@ class _ReprodutorState extends State<Reprodutor> {
                             borderRadius: BorderRadius.circular(1000),
                           ),
                           child: Icon(
-                              (shuf == true) ? Icons.shuffle : Icons.loop,
+                              (isShuf == true) ? Icons.shuffle : Icons.loop,
                               color: Colors.white,
                               size: 40),
                         ),
@@ -204,7 +226,7 @@ class _ReprodutorState extends State<Reprodutor> {
                       ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            lup = !lup;
+                            isLoop = !isLoop;
                           });
                         },
                         style: ElevatedButton.styleFrom(
@@ -217,7 +239,9 @@ class _ReprodutorState extends State<Reprodutor> {
                             borderRadius: BorderRadius.circular(1000),
                           ),
                           child: Icon(
-                              (lup == true) ? Icons.repeat : Icons.repeat_one,
+                              (isLoop == true)
+                                  ? Icons.repeat
+                                  : Icons.repeat_one,
                               color: Colors.white,
                               size: 40),
                         ),
@@ -252,11 +276,13 @@ class _ReprodutorState extends State<Reprodutor> {
                         height: 130,
                         child: ElevatedButton(
                           onPressed: () {
-                            setState(() {
-                              play = !play;
-                            });
-                            audioPlayer.playOrPause();
-
+                            if (_player.playing) {
+                              _player.pause();
+                            } else {
+                              if (_player.currentIndex != null) {
+                                _player.play();
+                              }
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Colors.transparent,
@@ -287,7 +313,9 @@ class _ReprodutorState extends State<Reprodutor> {
                               borderRadius: BorderRadius.circular(1000),
                             ),
                             child: Icon(
-                                (play == true) ? Icons.play_arrow : Icons.pause,
+                                (isPlay == true)
+                                    ? Icons.play_arrow
+                                    : Icons.pause,
                                 color: Color(0xFF2c0824),
                                 size: 90),
                           ),
