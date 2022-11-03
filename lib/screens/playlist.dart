@@ -29,7 +29,7 @@ class _PlaylistState extends State<Playlist> {
 
   // #endregion
 
-  //Player 
+  //Player
   // #region Visibility Changer
   void _changePlayerViewVisibility() {
     setState(() {
@@ -77,7 +77,7 @@ class _PlaylistState extends State<Playlist> {
         child: Column(
           children: [
             SizedBox(height: 25.0),
-            Text('PLAYING NOW',
+            Text('Playlist',
                 style: GoogleFonts.poiretOne(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

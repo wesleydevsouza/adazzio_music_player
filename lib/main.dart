@@ -4,6 +4,7 @@ import 'package:music_player/screens/circular.dart';
 import 'package:music_player/screens/playlist.dart';
 import 'package:music_player/screens/test.dart';
 import 'components/theme.dart';
+import 'screens/migration.dart';
 
 void main() {
   WidgetsFlutterBinding?.ensureInitialized();
@@ -17,9 +18,7 @@ class BytebankApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: adazzioTheme,
-      home: TestingApp(
-        title: 'Juuj',
-      ),
+      home: Migration(),
     );
   }
 }

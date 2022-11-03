@@ -16,18 +16,18 @@ class Reprodutor extends StatefulWidget {
   _ReprodutorState createState() => _ReprodutorState();
 }
 
-// #region Var de Controle
-bool isFav = true;
-bool isShuf = true;
-bool isLoop = true;
-bool isPlay = true;
-
-// #endregion
-
 class _ReprodutorState extends State<Reprodutor> {
 // #region Var de Controle
   //Cor BG
   //Color bgCor = Colors.cyanAccent;
+
+  // #region Var de Controle
+  bool isFav = true;
+  bool isShuf = true;
+  bool isLoop = true;
+  bool isPlay = true;
+
+  // #endregion
 
   //Player
   final AudioPlayer _player = AudioPlayer();
@@ -41,8 +41,6 @@ class _ReprodutorState extends State<Reprodutor> {
   final OnAudioQuery _audioQuery = OnAudioQuery();
 
   // #endregion
-
-  
 
   @override
   void initState() {

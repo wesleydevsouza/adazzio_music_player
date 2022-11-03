@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
@@ -13,7 +14,7 @@ class TestingApp extends StatefulWidget {
 
 class _TestingAppState extends State<TestingApp> {
   // #region Var de Controle
-  Color bgColor = Colors.brown;
+  Color bgColor = Color(0xFF110a29);
 
   bool isShuf = false;
   bool isFav = true;
@@ -76,8 +77,6 @@ class _TestingAppState extends State<TestingApp> {
         // backgroundColor: bgColor,
         body: SafeArea(
           child: Container(
-            // width: double.infinity,
-            // padding: const EdgeInsets.only(top: 56.0, right: 20.0, left: 20.0),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topRight,
@@ -157,20 +156,31 @@ class _TestingAppState extends State<TestingApp> {
                   // #endregion
 
                   // #region Album Artwork
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    child: Container(
-                      width: 300,
-                      height: 300,
-                      decoration: getDecoration(
-                          BoxShape.circle, const Offset(2, 2), 2.0, 0.0),
-                      margin: const EdgeInsets.only(top: 30, bottom: 30),
-                      child: QueryArtworkWidget(
-                        id: songs[currentIndex].id,
-                        type: ArtworkType.AUDIO,
-                        artworkBorder: BorderRadius.circular(200.0),
+                  Stack(
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(44, 12, 0, 0),
+                        child: Container(
+                          alignment: Alignment.center,
+                          width: 300,
+                          height: 300,
+                          decoration: getDecoration(
+                              BoxShape.circle, const Offset(2, 2), 2.0, 0.0),
+                          margin: const EdgeInsets.only(top: 30, bottom: 30),
+                          child: QueryArtworkWidget(
+                            id: songs[currentIndex].id,
+                            type: ArtworkType.AUDIO,
+                            artworkBorder: BorderRadius.circular(200.0),
+                          ),
+                        ),
                       ),
-                    ),
+                      Container(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(1000),
+                          child: Image.asset('images/circle.png', scale: 2),
+                        ),
+                      ),
+                    ],
                   ),
                   // #endregion
 
@@ -187,8 +197,8 @@ class _TestingAppState extends State<TestingApp> {
                           final total = durationState?.total ?? Duration.zero;
 
                           return Row(
+                            textDirection: TextDirection.ltr,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            mainAxisSize: MainAxisSize.max,
                             children: [
                               Flexible(
                                 child: Text(
@@ -202,11 +212,12 @@ class _TestingAppState extends State<TestingApp> {
                               Flexible(
                                 child: Text(
                                   currentSongTitle,
-                                  style: const TextStyle(
+                                  style: GoogleFonts.roboto(
                                     color: Colors.white70,
                                     fontWeight: FontWeight.bold,
                                     fontSize: 18,
                                   ),
+                                  textAlign: TextAlign.center,
                                 ),
                                 flex: 5,
                               ),
@@ -214,13 +225,14 @@ class _TestingAppState extends State<TestingApp> {
                                 child: Text(
                                   total.toString().split(".")[0],
                                   style: const TextStyle(
-                                    color: Colors.white70,
+                                    color: Colors.white,
                                     fontSize: 15,
                                   ),
                                 ),
                               ),
                             ],
                           );
+                          
                         },
                       ),
                       // #endregion
@@ -434,13 +446,6 @@ class _TestingAppState extends State<TestingApp> {
       );
     }
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        //backgroundColor: bgColor,
-        elevation: 20,
-        backgroundColor: bgColor,
-      ),
-      backgroundColor: bgColor,
       body: FutureBuilder<List<SongModel>>(
         future: _audioQuery.querySongs(
           orderType: OrderType.ASC_OR_SMALLER,
@@ -476,58 +481,64 @@ class _TestingAppState extends State<TestingApp> {
           // #region Adding songs to the list
           songs.clear();
           songs = item.data!;
-          return ListView.builder(
-              itemCount: item.data!.length,
-              itemBuilder: (context, index) {
-                return Container(
-                  margin:
-                      const EdgeInsets.only(top: 15.0, left: 12.0, right: 16.0),
-                  padding: const EdgeInsets.only(top: 30.0, bottom: 30),
-                  decoration: BoxDecoration(
-                    color: bgColor,
-                    borderRadius: BorderRadius.circular(20.0),
-                    boxShadow: const [
-                      BoxShadow(
-                        blurRadius: 4.0,
-                        offset: Offset(-4, -4),
-                        color: Colors.white24,
+          return Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Color(0xFF110a29),
+                  Color(0xFF2f0823),
+                ],
+              ),
+            ),
+            child: ListView.builder(
+                itemCount: item.data!.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin:
+                        const EdgeInsets.only(top: 12.0, left: 8.0, right: 8.0),
+                    padding: const EdgeInsets.only(top: 7.0, bottom: 8.0),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [Color(0xff9e2186), Color(0xff4f0f41)],
                       ),
-                      BoxShadow(
-                        blurRadius: 4.0,
-                        offset: Offset(4, 4),
-                        color: Colors.black,
-                      ),
-                    ],
-                  ),
-                  child: ListTile(
-                    textColor: Colors.white,
-                    title: Text(item.data![index].title),
-                    subtitle: Text(
-                      item.data![index].displayName,
-                      style: const TextStyle(
-                        color: Colors.white60,
-                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 4.0,
+                          offset: Offset(6, 6),
+                          color: Color(0xffbf2aa2).withOpacity(0.9),
+                        ),
+                      ],
                     ),
-                    trailing: const Icon(Icons.more_vert),
-                    leading: QueryArtworkWidget(
-                      id: item.data![index].id,
-                      type: ArtworkType.AUDIO,
-                    ),
-                    onTap: () async {
-                      //show the player view
-                      _changePlayerViewVisibility();
+                    child: ListTile(
+                      textColor: Colors.white,
+                      title: Text(item.data![index].title),
+                      subtitle: Text(item.data![index].fileExtension),
+                      trailing: const Icon(Icons.more_vert),
+                      leading: QueryArtworkWidget(
+                        id: item.data![index].id,
+                        type: ArtworkType.AUDIO,
+                      ),
+                      onTap: () async {
+                        //show the player view
+                        _changePlayerViewVisibility();
 
-                      toast(context, "Playing:  " + item.data![index].title);
-                      // Try to load audio from a source and catch any errors.
-                      //  String? uri = item.data![index].uri;
-                      // await _player.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
-                      await _player.setAudioSource(createPlaylist(item.data!),
-                          initialIndex: index);
-                      await _player.play();
-                    },
-                  ),
-                );
-              });
+                        toast(context, "Playing:  " + item.data![index].title);
+                        // Try to load audio from a source and catch any errors.
+                        //  String? uri = item.data![index].uri;
+                        // await _player.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
+                        await _player.setAudioSource(createPlaylist(item.data!),
+                            initialIndex: index);
+                        await _player.play();
+                      },
+                    ),
+                  );
+                }),
+          );
           // #endregion
         },
       ),
