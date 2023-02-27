@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:rxdart/rxdart.dart';
+import '../constants/styling.dart';
 
 class Reprodutor extends StatefulWidget {
   const Reprodutor({Key? key}) : super(key: key);
@@ -60,14 +56,13 @@ class _ReprodutorState extends State<Reprodutor> {
 
   Widget circularAudioPlayer(
       RealtimePlayingInfos realtimePlayingInfos, double screenWidth) {
-    Color primaryColor = Color(0xfff306c4);
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircularPercentIndicator(
           radius: screenWidth / 2.2,
-          backgroundColor: primaryColor,
-          progressColor: Color(0xff584add),
+          backgroundColor: AppTheme.corCirculo,
+          progressColor: AppTheme.corProgresso,
           percent: realtimePlayingInfos.currentPosition.inSeconds /
               realtimePlayingInfos.duration.inSeconds,
         ),
@@ -85,10 +80,7 @@ class _ReprodutorState extends State<Reprodutor> {
             gradient: LinearGradient(
               begin: Alignment.topRight,
               end: Alignment.bottomLeft,
-              colors: [
-                Color(0xFF110a29),
-                Color(0xFF2f0823),
-              ],
+              colors: AppTheme.GradientBG,
             ),
           ),
           child: Padding(
@@ -113,24 +105,21 @@ class _ReprodutorState extends State<Reprodutor> {
                           borderRadius: BorderRadius.circular(1000),
                         ),
                         child: const Icon(Icons.arrow_back,
-                            color: Colors.white, size: 30),
+                            color: AppTheme.corFonte, size: 30),
                       ),
                     ),
-                    Text('PLAYING NOW',
-                        style: GoogleFonts.poiretOne(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center),
+                    Text(
+                      'PLAYING NOW',
+                      style: Theme.of(context).textTheme.subtitle2,
+                      textAlign: TextAlign.center,
+                    ),
                     IconButton(
                       //icon: Icon(Icons.favorite_border, color: Colors.purpleAccent, size: 32),
                       icon: Icon(
                           (isFav == false)
                               ? Icons.favorite
                               : Icons.favorite_border,
-                          color: Colors.purpleAccent,
+                          color: AppTheme.corDestaque,
                           size: 32),
                       onPressed: () {
                         setState(() {
@@ -197,27 +186,22 @@ class _ReprodutorState extends State<Reprodutor> {
                           ),
                           child: Icon(
                               (isShuf == true) ? Icons.shuffle : Icons.loop,
-                              color: Colors.white,
+                              color: AppTheme.corFonte,
                               size: 40),
                         ),
                       ),
                       Column(
                         children: [
-                          Text('POP/STARS',
-                              style: GoogleFonts.roboto(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: 2,
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center),
-                          Text('K/DA',
-                              style: GoogleFonts.poiretOne(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
-                              ),
-                              textAlign: TextAlign.center),
+                          Text(
+                            'POP/STARS',
+                            style: Theme.of(context).textTheme.subtitle1,
+                            textAlign: TextAlign.center,
+                          ),
+                          Text(
+                            'K/DA',
+                            style: Theme.of(context).textTheme.subtitle1,
+                            textAlign: TextAlign.center,
+                          ),
                         ],
                       ),
                       //BOTÃO REPEAT
@@ -240,7 +224,7 @@ class _ReprodutorState extends State<Reprodutor> {
                               (isLoop == true)
                                   ? Icons.repeat
                                   : Icons.repeat_one,
-                              color: Colors.white,
+                              color: AppTheme.corFonte,
                               size: 40),
                         ),
                       ),
@@ -266,7 +250,7 @@ class _ReprodutorState extends State<Reprodutor> {
                             borderRadius: BorderRadius.circular(1000),
                           ),
                           child: const Icon(Icons.skip_previous,
-                              color: Colors.white, size: 70),
+                              color: AppTheme.corFonte, size: 70),
                         ),
                       ),
                       //BOTÃO PLAY
@@ -291,7 +275,7 @@ class _ReprodutorState extends State<Reprodutor> {
                             decoration: BoxDecoration(
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.purpleAccent.withOpacity(0.3),
+                                  color: AppTheme.corDestaque.withOpacity(0.3),
                                   spreadRadius: 12,
                                   blurRadius: 12,
                                   offset: const Offset(
@@ -299,12 +283,7 @@ class _ReprodutorState extends State<Reprodutor> {
                                 ),
                               ],
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xff6d38e5),
-                                  Color(0xffb235d7),
-                                  Color(0xffff37d8),
-                                  Color(0xffff37d8)
-                                ],
+                                colors: AppTheme.GradientButton,
                                 begin: Alignment.bottomLeft,
                                 end: Alignment.topRight,
                               ),
@@ -332,7 +311,7 @@ class _ReprodutorState extends State<Reprodutor> {
                             borderRadius: BorderRadius.circular(1000),
                           ),
                           child: const Icon(Icons.skip_next,
-                              color: Colors.white, size: 70),
+                              color: AppTheme.corFonte, size: 70),
                         ),
                       ),
                     ],

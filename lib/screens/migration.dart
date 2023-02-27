@@ -303,7 +303,7 @@ class _MigrationState extends State<Migration> {
                           ),
                         ),
                         //BOTÃO PLAY
-                        SizedBox(
+                        SizedBox( 
                           height: 130,
                           child: ElevatedButton(
                             onPressed: () {

@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_player/constants/styling.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
@@ -13,10 +13,7 @@ class Playlist extends StatefulWidget {
 }
 
 class _PlaylistState extends State<Playlist> {
-  // #region Var de Controle
-  //Cor BG
-  //Color bgCor = Colors.cyanAccent;
-
+  //#region Var de Controle
   //Player
   final AudioPlayer _player = AudioPlayer();
   bool isPlayerViewVisible = false;
@@ -27,7 +24,7 @@ class _PlaylistState extends State<Playlist> {
   int currentIndex = 0;
   final OnAudioQuery _audioQuery = OnAudioQuery();
 
-  // #endregion
+  //#endregion
 
   //Player
   // #region Visibility Changer
@@ -77,14 +74,11 @@ class _PlaylistState extends State<Playlist> {
         child: Column(
           children: [
             SizedBox(height: 25.0),
-            Text('Playlist',
-                style: GoogleFonts.poiretOne(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 2,
-                  color: Colors.white,
-                ),
-                textAlign: TextAlign.center),
+            Text(
+              'PLAYLIST',
+              style: Theme.of(context).textTheme.subtitle2,
+              textAlign: TextAlign.center,
+            ),
             SizedBox(height: 20.0),
             FutureBuilder<List<SongModel>>(
               future: _audioQuery.querySongs(
@@ -122,19 +116,20 @@ class _PlaylistState extends State<Playlist> {
                             gradient: const LinearGradient(
                               begin: Alignment.bottomCenter,
                               end: Alignment.topCenter,
-                              colors: [Color(0xff9e2186), Color(0xff4f0f41)],
+                              colors: AppTheme.GradientCard,
                             ),
                             borderRadius: BorderRadius.circular(20.0),
                             boxShadow: [
                               BoxShadow(
                                 blurRadius: 4.0,
                                 offset: Offset(6, 6),
-                                color: Color(0xffbf2aa2).withOpacity(0.9),
+                                color: AppTheme.GradientCardShadow.withOpacity(
+                                    0.9),
                               ),
                             ],
                           ),
                           child: ListTile(
-                            textColor: Colors.white,
+                            textColor: AppTheme.corFonte,
                             title: Text(item.data![index].title),
                             subtitle: Text(item.data![index].fileExtension),
                             trailing: const Icon(Icons.more_vert),
