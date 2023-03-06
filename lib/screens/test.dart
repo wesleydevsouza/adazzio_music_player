@@ -5,6 +5,9 @@ import 'package:just_audio/just_audio.dart';
 import 'package:on_audio_query/on_audio_query.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../components/components.dart';
+import '../constants/styling.dart';
+
 class TestingApp extends StatefulWidget {
   const TestingApp({Key? key, required this.title}) : super(key: key);
   final String title;
@@ -14,7 +17,6 @@ class TestingApp extends StatefulWidget {
 
 class _TestingAppState extends State<TestingApp> {
   // #region Var de Controle
-  Color bgColor = Color(0xFF110a29);
 
   bool isShuf = false;
   bool isFav = true;
@@ -74,7 +76,7 @@ class _TestingAppState extends State<TestingApp> {
   Widget build(BuildContext context) {
     if (isPlayerViewVisible) {
       return Scaffold(
-        // backgroundColor: bgColor,
+        // backgroundColor: AppTheme.bgColor,
         body: SafeArea(
           child: Container(
             decoration: const BoxDecoration(
@@ -232,7 +234,6 @@ class _TestingAppState extends State<TestingApp> {
                               ),
                             ],
                           );
-                          
                         },
                       ),
                       // #endregion
@@ -249,28 +250,11 @@ class _TestingAppState extends State<TestingApp> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         // #region Prev Button
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_player.hasPrevious) {
-                              _player.seekToPrevious();
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.transparent,
-                            elevation: 0,
-                            shape: const CircleBorder(),
-                          ),
-                          child: InkWell(
-                            child: Container(
-                              padding: const EdgeInsets.all(10.0),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(1000),
-                              ),
-                              child: const Icon(Icons.skip_previous,
-                                  color: Colors.white, size: 70),
-                            ),
-                          ),
-                        ),
+                        AddazButton(Icons.skip_previous, 70, () {
+                        if (_player.hasPrevious) {
+                          _player.seekToPrevious();
+                        }
+                      }),
                         // #endregion
 
                         // #region Play/Pause
@@ -590,7 +574,7 @@ class _TestingAppState extends State<TestingApp> {
   BoxDecoration getDecoration(
       BoxShape shape, Offset offset, double blurRadius, double spreadRadius) {
     return BoxDecoration(
-      color: bgColor,
+      color: AppTheme.bgColor,
       shape: shape,
       boxShadow: [
         BoxShadow(
@@ -613,7 +597,7 @@ class _TestingAppState extends State<TestingApp> {
       double blurRadius, double spreadRadius) {
     return BoxDecoration(
       borderRadius: borderRadius,
-      color: bgColor,
+      color: AppTheme.bgColor,
       boxShadow: [
         BoxShadow(
           offset: -offset,

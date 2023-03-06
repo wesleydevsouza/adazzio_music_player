@@ -70,94 +70,98 @@ class _PlaylistState extends State<Playlist> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            SizedBox(height: 25.0),
-            Text(
-              'PLAYLIST',
-              style: Theme.of(context).textTheme.subtitle2,
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 20.0),
-            FutureBuilder<List<SongModel>>(
-              future: _audioQuery.querySongs(
-                sortType: null,
-                orderType: OrderType.ASC_OR_SMALLER,
-                uriType: UriType.EXTERNAL,
-                ignoreCase: true,
-              ),
-              builder: (context, item) {
-                //Carregando as músicas
-                if (item.data == null) {
-                  return const Center(
-                    child: CircularProgressIndicator(),
-                  );
-                }
-                //Se não encontrar nenhuma música
-                if (item.data!.isEmpty) {
-                  return const Center(
-                    child: Text("No Songs was found"),
-                  );
-                }
-
-                //adicionando as músicas à lista de músicas
-                songs.clear();
-                songs = item.data!;
-                return Expanded(
-                  child: ListView.builder(
-                      itemCount: item.data!.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          margin: const EdgeInsets.only(
-                              top: 12.0, left: 8.0, right: 8.0),
-                          padding: const EdgeInsets.only(top: 7.0, bottom: 8.0),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                              colors: AppTheme.GradientCard,
-                            ),
-                            borderRadius: BorderRadius.circular(20.0),
-                            boxShadow: [
-                              BoxShadow(
-                                blurRadius: 4.0,
-                                offset: Offset(6, 6),
-                                color: AppTheme.GradientCardShadow.withOpacity(
-                                    0.9),
-                              ),
-                            ],
-                          ),
-                          child: ListTile(
-                            textColor: AppTheme.corFonte,
-                            title: Text(item.data![index].title),
-                            subtitle: Text(item.data![index].fileExtension),
-                            trailing: const Icon(Icons.more_vert),
-                            leading: QueryArtworkWidget(
-                              id: item.data![index].id,
-                              type: ArtworkType.AUDIO,
-                            ),
-                            onTap: () async {
-                              //mostrar a view do player
-                              _changePlayerViewVisibility();
-
-                              toast(context,
-                                  "Playing " + item.data![index].title);
-
-                              //String? uri = item.data![index].uri;
-                              await _player.setAudioSource(
-                                  createPlaylist(item.data!),
-                                  initialIndex: index);
-                              await _player.play();
-                            },
-                          ),
-                        );
-                      }),
-                );
-              },
-            ),
-          ],
+      body: FutureBuilder<List<SongModel>>(
+        future: _audioQuery.querySongs(
+          orderType: OrderType.ASC_OR_SMALLER,
+          uriType: UriType.EXTERNAL,
+          ignoreCase: true,
         ),
+        builder: (context, item) {
+          // #region Content
+
+          // #region Loading
+          if (item.data == null) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          // #endregion
+
+          // #region No songs found
+          if (item.data!.isEmpty) {
+            return const Center(
+              child: Text("No Songs Found"),
+            );
+          }
+          // #endregion
+
+          // #endregion
+
+          // You can use [item.data!] direct or you can create a list of songs as
+          // List<SongModel> songs = item.data!;
+
+          //showing the songs
+
+          // #region Adding songs to the list
+          songs.clear();
+          songs = item.data!;
+          return Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: AppTheme.GradientBG,
+              ),
+            ),
+            child: ListView.builder(
+                itemCount: item.data!.length,
+                itemBuilder: (context, index) {
+                  return Container(
+                    margin:
+                        const EdgeInsets.only(top: 12.0, left: 8.0, right: 8.0),
+                    padding: const EdgeInsets.only(top: 7.0, bottom: 8.0),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: AppTheme.GradientCard,
+                      ),
+                      borderRadius: BorderRadius.circular(20.0),
+                      boxShadow: [
+                        BoxShadow(
+                          blurRadius: 4.0,
+                          offset: Offset(6, 6),
+                          color: AppTheme.GradientCardShadow.withOpacity(0.9),
+                        ),
+                      ],
+                    ),
+                    child: ListTile(
+                      textColor: AppTheme.corFonte,
+                      title: Text(item.data![index].title),
+                      subtitle: Text(item.data![index].fileExtension),
+                      trailing: const Icon(Icons.more_vert),
+                      leading: QueryArtworkWidget(
+                        id: item.data![index].id,
+                        type: ArtworkType.AUDIO,
+                      ),
+                      onTap: () async {
+                        //show the player view
+                        _changePlayerViewVisibility();
+
+                        toast(context, "Playing:  " + item.data![index].title);
+                        // Try to load audio from a source and catch any errors.
+                        //  String? uri = item.data![index].uri;
+                        // await _player.setAudioSource(AudioSource.uri(Uri.parse(uri!)));
+                        await _player.setAudioSource(createPlaylist(item.data!),
+                            initialIndex: index);
+                        await _player.play();
+                      },
+                    ),
+                  );
+                }),
+          );
+          // #endregion
+        },
       ),
     );
   }

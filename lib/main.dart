@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:music_player/constants/styling.dart';
-import 'package:music_player/screens/circular.dart';
-import 'package:music_player/screens/playlist.dart';
-import 'package:music_player/screens/reprodutor.dart';
-import 'package:music_player/screens/test.dart';
-import 'screens/migration.dart';
+import 'components/routes.dart';
 
 void main() {
   WidgetsFlutterBinding?.ensureInitialized();
@@ -18,8 +14,10 @@ class AdazzioApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Adazzio',
       theme: AppTheme.adazzioTheme,
-      home: Playlist(),
+      initialRoute: '/test',
+      onGenerateRoute: RouteGenerator.generateRoute,
     );
   }
 }

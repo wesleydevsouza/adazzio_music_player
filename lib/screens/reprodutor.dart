@@ -1,9 +1,11 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:music_player/components/components.dart';
 import 'package:on_audio_query/on_audio_query.dart';
+import '../components/functions.dart';
 import '../constants/styling.dart';
+import 'package:rxdart/rxdart.dart';
 
 class Reprodutor extends StatefulWidget {
   const Reprodutor({Key? key}) : super(key: key);
@@ -13,68 +15,62 @@ class Reprodutor extends StatefulWidget {
 }
 
 class _ReprodutorState extends State<Reprodutor> {
-// #region Var de Controle
-  //Cor BG
-  //Color bgCor = Colors.cyanAccent;
-
-  // #region Var de Controle
+  bool isShuf = false;
   bool isFav = true;
-  bool isShuf = true;
-  bool isLoop = true;
-  bool isPlay = true;
 
-  // #endregion
+  final OnAudioQuery _audioQuery = OnAudioQuery();
 
-  //Player
   final AudioPlayer _player = AudioPlayer();
   bool isPlayerViewVisible = false;
-  final AssetsAudioPlayer audioPlayer = AssetsAudioPlayer();
 
-  //Playlist
   List<SongModel> songs = [];
   String currentSongTitle = '';
   int currentIndex = 0;
-  final OnAudioQuery _audioQuery = OnAudioQuery();
 
-  // #endregion
+  //define a method to set the player view visibility
+  ///TODO: REMOVER
+  // void _changePlayerViewVisibility() {
+  //   setState(() {
+  //     isPlayerViewVisible = !isPlayerViewVisible;
+  //   });
+  // }
 
+  //duration state stream
+  Stream<DurationState> get _durationStateStream =>
+      Rx.combineLatest2<Duration, Duration?, DurationState>(
+          _player.positionStream,
+          _player.durationStream,
+          (position, duration) => DurationState(
+              position: position, total: duration ?? Duration.zero));
+
+  //request permission from initStateMethod
   @override
   void initState() {
     super.initState();
-    setupPlaylist();
+    requestStoragePermission();
+
+    //update the current playing song index listener
+    _player.currentIndexStream.listen((index) {
+      if (index != null) {
+        _updateCurrentPlayingSongDetails(index);
+      }
+    });
   }
 
-  void setupPlaylist() async {
-    await audioPlayer.open(Audio('/music/pop.mp3'), autoStart: false);
-  }
-
+  //Player Disposer
   @override
   void dispose() {
+    _player.dispose();
     super.dispose();
-    audioPlayer.dispose();
-  }
-
-  Widget circularAudioPlayer(
-      RealtimePlayingInfos realtimePlayingInfos, double screenWidth) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CircularPercentIndicator(
-          radius: screenWidth / 2.2,
-          backgroundColor: AppTheme.corCirculo,
-          progressColor: AppTheme.corProgresso,
-          percent: realtimePlayingInfos.currentPosition.inSeconds /
-              realtimePlayingInfos.duration.inSeconds,
-        ),
-      ],
-    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        //Background
+        left: true,
+        right: true,
+        bottom: true,
         child: Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
@@ -84,37 +80,38 @@ class _ReprodutorState extends State<Reprodutor> {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.fromLTRB(5, 26, 5, 0),
             child: Column(
-              children: [
-                const Spacer(flex: 2),
-                //Barra superior
+              children: <Widget>[
+                // Song Title
                 Row(
-                  textDirection: TextDirection.ltr,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisSize: MainAxisSize.max,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.transparent,
-                        elevation: 0,
-                        shape: const CircleBorder(),
-                      ),
-                      child: Ink(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                        child: const Icon(Icons.arrow_back,
-                            color: AppTheme.corFonte, size: 30),
-                      ),
+                    AddazButton(
+                      Icons.arrow_back,
+                      30,
+                      () {
+                        //_cha1ngePlayerViewVisibility();
+                      },
                     ),
-                    Text(
-                      'PLAYING NOW',
-                      style: Theme.of(context).textTheme.subtitle2,
-                      textAlign: TextAlign.center,
-                    ),
+
+                    // Container(
+                    //   child: Flexible(
+                    //     child: Text(
+                    //       currentSongTitle,
+                    //       style: const TextStyle(
+                    //         color: Colors.white70,
+                    //         fontWeight: FontWeight.bold,
+                    //         fontSize: 18,
+                    //       ),
+                    //     ),
+                    //     flex: 5,
+                    //   ),
+                    // ),
+
+                    //Fav Button
                     IconButton(
-                      //icon: Icon(Icons.favorite_border, color: Colors.purpleAccent, size: 32),
                       icon: Icon(
                           (isFav == false)
                               ? Icons.favorite
@@ -129,29 +126,23 @@ class _ReprodutorState extends State<Reprodutor> {
                     ),
                   ],
                 ),
-                const Spacer(flex: 3),
-                //Album Cover
+                //Album Artwork
                 Stack(
-                  clipBehavior: Clip.none,
-                  alignment: AlignmentDirectional.center,
                   children: <Widget>[
-                    Container(
-                      alignment: Alignment.center,
-                      child: audioPlayer.builderRealtimePlayingInfos(
-                        builder: (context, realtimePlayingInfos) {
-                          if (realtimePlayingInfos != null) {
-                            return circularAudioPlayer(realtimePlayingInfos,
-                                MediaQuery.of(context).size.width);
-                          } else {
-                            return Container();
-                          }
-                        },
-                      ),
-                    ),
-                    Container(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(1000),
-                        child: Image.asset('images/cover.jpg', scale: 2),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(44, 12, 0, 0),
+                      child: Container(
+                        alignment: Alignment.center,
+                        width: AppTheme.largAlbum,
+                        height: AppTheme.altAlbum,
+                        decoration: AppTheme.getDecoration(
+                            BoxShape.circle, const Offset(2, 2), 2.0, 0.0),
+                        margin: const EdgeInsets.only(top: 30, bottom: 30),
+                        // child: QueryArtworkWidget(
+                        //   id: songs[currentIndex].id,
+                        //   type: ArtworkType.AUDIO,
+                        //   artworkBorder: BorderRadius.circular(200.0),
+                        // ),
                       ),
                     ),
                     Container(
@@ -162,102 +153,74 @@ class _ReprodutorState extends State<Reprodutor> {
                     ),
                   ],
                 ),
-                const Spacer(flex: 3),
-                //Meio
-                Container(
-                  child: Row(
-                    textDirection: TextDirection.ltr,
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isShuf = !isShuf;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          elevation: 0,
-                          shape: const CircleBorder(),
-                        ),
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(1000),
-                          ),
-                          child: Icon(
-                              (isShuf == true) ? Icons.shuffle : Icons.loop,
-                              color: AppTheme.corFonte,
-                              size: 40),
-                        ),
-                      ),
-                      Column(
-                        children: [
-                          Text(
-                            'POP/STARS',
-                            style: Theme.of(context).textTheme.subtitle1,
-                            textAlign: TextAlign.center,
-                          ),
-                          Text(
-                            'K/DA',
-                            style: Theme.of(context).textTheme.subtitle1,
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
-                      ),
-                      //BOTÃO REPEAT
-                      ElevatedButton(
-                        onPressed: () {
-                          setState(() {
-                            isLoop = !isLoop;
-                          });
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          elevation: 0,
-                          shape: const CircleBorder(),
-                        ),
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(1000),
-                          ),
-                          child: Icon(
-                              (isLoop == true)
-                                  ? Icons.repeat
-                                  : Icons.repeat_one,
-                              color: AppTheme.corFonte,
-                              size: 40),
-                        ),
-                      ),
-                    ],
-                  ),
+                //Progress
+                Column(
+                  children: [
+                    StreamBuilder<DurationState>(
+                      stream: _durationStateStream,
+                      builder: (context, snapshot) {
+                        final durationState = snapshot.data;
+                        final progress =
+                            durationState?.position ?? Duration.zero;
+                        final total = durationState?.total ?? Duration.zero;
+
+                        return Row(
+                          textDirection: TextDirection.ltr,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Padding(
+                                padding: const EdgeInsets.all(10.0),
+                                child: Text(
+                                  progress.toString().split(".")[0],
+                                  style: const TextStyle(
+                                    color: AppTheme.corFonteProgress,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Flexible(
+                              child: Text(
+                                currentSongTitle,
+                                style: Theme.of(context).textTheme.bodyText1,
+                                textAlign: TextAlign.center,
+                              ),
+                              flex: 5,
+                            ),
+                            Flexible(
+                              child: Text(
+                                total.toString().split(".")[0],
+                                style: const TextStyle(
+                                  color: AppTheme.corFonte,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
                 ),
-                const Spacer(flex: 2),
+                //Buttons
                 Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
                   child: Row(
                     textDirection: TextDirection.ltr,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisSize: MainAxisSize.max,
                     children: [
-                      //BOTÃO SKIP BACK
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          elevation: 0,
-                          shape: const CircleBorder(),
-                        ),
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(1000),
-                          ),
-                          child: const Icon(Icons.skip_previous,
-                              color: AppTheme.corFonte, size: 70),
-                        ),
-                      ),
-                      //BOTÃO PLAY
-                      SizedBox(
-                        height: 130,
-                        child: ElevatedButton(
-                          onPressed: () {
+                      //Prev Button
+                      AddazButton(Icons.skip_previous, 70, () {
+                        if (_player.hasPrevious) {
+                          _player.seekToPrevious();
+                        }
+                      }),
+                      //Play/Pause
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
                             if (_player.playing) {
                               _player.pause();
                             } else {
@@ -266,12 +229,8 @@ class _ReprodutorState extends State<Reprodutor> {
                               }
                             }
                           },
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.transparent,
-                            elevation: 0,
-                            shape: const CircleBorder(),
-                          ),
-                          child: Ink(
+                          child: Container(
+                            padding: const EdgeInsets.all(2.0),
                             decoration: BoxDecoration(
                               boxShadow: [
                                 BoxShadow(
@@ -287,42 +246,121 @@ class _ReprodutorState extends State<Reprodutor> {
                                 begin: Alignment.bottomLeft,
                                 end: Alignment.topRight,
                               ),
-                              borderRadius: BorderRadius.circular(1000),
+                              borderRadius: BorderRadius.circular(100),
                             ),
-                            child: Icon(
-                                (isPlay == true)
-                                    ? Icons.play_arrow
-                                    : Icons.pause,
-                                color: Color(0xFF2c0824),
-                                size: 90),
+                            child: StreamBuilder<bool>(
+                              stream: _player.playingStream,
+                              builder: (context, snapshot) {
+                                bool? playingState = snapshot.data;
+                                if (playingState != null && playingState) {
+                                  return const Icon(
+                                    Icons.pause,
+                                    size: 90,
+                                    color: Color(0xFF2c0824),
+                                  );
+                                }
+                                return const Icon(
+                                  Icons.play_arrow,
+                                  size: 90,
+                                  color: Color(0xFF2c0824),
+                                );
+                              },
+                            ),
                           ),
                         ),
                       ),
-                      //BOTÃO SKIP NEXT
-                      ElevatedButton(
-                        onPressed: () {},
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.transparent,
-                          elevation: 0,
-                          shape: const CircleBorder(),
-                        ),
-                        child: Ink(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(1000),
+                      // Next Button
+                      AddazButton(Icons.skip_next, 70, () {
+                        if (_player.hasPrevious) {
+                          _player.seekToNext();
+                        }
+                      }),
+                    ],
+                  ),
+                ),
+                //Player Visibility and Controlls
+                Container(
+                  margin: const EdgeInsets.only(top: 20, bottom: 20),
+                  child: Row(
+                    textDirection: TextDirection.ltr,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      //Shuffle Button
+                      AddazButton(
+                        Icons.shuffle,
+                        40,
+                        () {
+                          if (isShuf == false) {
+                            isShuf = true;
+                            _player.setShuffleModeEnabled(true);
+                            toast(context, "Shuffling enabled");
+                          } else {
+                            isShuf = false;
+                            _player.setShuffleModeEnabled(false);
+                            toast(context, "Shuffling disabled");
+                          }
+                        },
+                      ),
+                      Flexible(
+                        child: InkWell(
+                          onTap: () {
+                            _player.loopMode == LoopMode.one
+                                ? _player.setLoopMode(LoopMode.all)
+                                : _player.setLoopMode(LoopMode.one);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(10.0),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(1000),
+                            ),
+                            child: StreamBuilder<LoopMode>(
+                              stream: _player.loopModeStream,
+                              builder: (context, snapshot) {
+                                final loopMode = snapshot.data;
+                                if (LoopMode.one == loopMode) {
+                                  return const Icon(
+                                    Icons.repeat_one,
+                                    color: AppTheme.corFonte,
+                                    size: 40,
+                                  );
+                                }
+                                return const Icon(
+                                  Icons.repeat,
+                                  color: AppTheme.corFonte,
+                                  size: 40,
+                                );
+                              },
+                            ),
                           ),
-                          child: const Icon(Icons.skip_next,
-                              color: AppTheme.corFonte, size: 70),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Spacer(flex: 8),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  void requestStoragePermission() async {
+    if (!kIsWeb) {
+      bool permissionStatus = await _audioQuery.permissionsStatus();
+      if (!permissionStatus) {
+        await _audioQuery.permissionsRequest();
+      }
+      setState(() {});
+    }
+  }
+
+  void _updateCurrentPlayingSongDetails(int index) {
+    setState(() {
+      if (songs.isNotEmpty) {
+        currentSongTitle = songs[index].title;
+        currentIndex = index;
+      }
+    });
   }
 }
