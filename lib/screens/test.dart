@@ -240,6 +240,7 @@ class _TestingAppState extends State<TestingApp> {
                     ],
                   ),
                   // #endregion
+                  
 
                   // #region Bottons
                   Container(
@@ -250,11 +251,7 @@ class _TestingAppState extends State<TestingApp> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         // #region Prev Button
-                        AddazButton(Icons.skip_previous, 70, () {
-                        if (_player.hasPrevious) {
-                          _player.seekToPrevious();
-                        }
-                      }),
+
                         // #endregion
 
                         // #region Play/Pause

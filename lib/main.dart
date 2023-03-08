@@ -7,16 +7,18 @@ void main() {
   WidgetsFlutterBinding?.ensureInitialized();
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual,
       overlays: [SystemUiOverlay.top]);
-  runApp(AdazzioApp());
+  runApp(const AdazzioApp());
 }
 
 class AdazzioApp extends StatelessWidget {
+  const AdazzioApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Adazzio',
       theme: AppTheme.adazzioTheme,
-      initialRoute: '/test',
+      initialRoute: '/playlist',
       onGenerateRoute: RouteGenerator.generateRoute,
     );
   }

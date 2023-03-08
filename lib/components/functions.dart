@@ -1,13 +1,5 @@
 import 'package:flutter/material.dart';
 
-class Functions extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
-  }
-}
-
 void toast(BuildContext context, String text) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
     content: Text(text),

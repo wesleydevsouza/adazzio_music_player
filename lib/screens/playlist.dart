@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:music_player/constants/styling.dart';
 import 'package:on_audio_query/on_audio_query.dart';
-import 'package:rxdart/rxdart.dart';
 
 class Playlist extends StatefulWidget {
   const Playlist({Key? key}) : super(key: key);
@@ -13,7 +12,6 @@ class Playlist extends StatefulWidget {
 }
 
 class _PlaylistState extends State<Playlist> {
-  //#region Var de Controle
   //Player
   final AudioPlayer _player = AudioPlayer();
   bool isPlayerViewVisible = false;
@@ -24,27 +22,13 @@ class _PlaylistState extends State<Playlist> {
   int currentIndex = 0;
   final OnAudioQuery _audioQuery = OnAudioQuery();
 
-  //#endregion
-
   //Player
-  // #region Visibility Changer
   void _changePlayerViewVisibility() {
     setState(() {
       isPlayerViewVisible = !isPlayerViewVisible;
     });
   }
-  // #endregion
 
-  // #region Duration State
-  Stream<DurationState> get _durationStateStream =>
-      Rx.combineLatest2<Duration, Duration?, DurationState>(
-          _player.positionStream,
-          _player.durationStream,
-          (position, duration) => DurationState(
-              position: position, total: duration ?? Duration.zero));
-  // #endregion
-
-  // #region User Permision
   @override
   void initState() {
     super.initState();
@@ -57,16 +41,11 @@ class _PlaylistState extends State<Playlist> {
       }
     });
   }
-  // #endregion
-
-  // #region Player Disposer
   @override
   void dispose() {
     _player.dispose();
     super.dispose();
   }
-  // #endregion
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,33 +55,20 @@ class _PlaylistState extends State<Playlist> {
           uriType: UriType.EXTERNAL,
           ignoreCase: true,
         ),
-        builder: (context, item) {
-          // #region Content
-
-          // #region Loading
+        builder: (context, item) {      
           if (item.data == null) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          // #endregion
-
-          // #region No songs found
           if (item.data!.isEmpty) {
             return const Center(
               child: Text("No Songs Found"),
             );
           }
-          // #endregion
-
-          // #endregion
-
           // You can use [item.data!] direct or you can create a list of songs as
           // List<SongModel> songs = item.data!;
-
           //showing the songs
-
-          // #region Adding songs to the list
           songs.clear();
           songs = item.data!;
           return Container(
@@ -130,7 +96,7 @@ class _PlaylistState extends State<Playlist> {
                       boxShadow: [
                         BoxShadow(
                           blurRadius: 4.0,
-                          offset: Offset(6, 6),
+                          offset: const Offset(6, 6),
                           color: AppTheme.GradientCardShadow.withOpacity(0.9),
                         ),
                       ],
@@ -160,7 +126,6 @@ class _PlaylistState extends State<Playlist> {
                   );
                 }),
           );
-          // #endregion
         },
       ),
     );

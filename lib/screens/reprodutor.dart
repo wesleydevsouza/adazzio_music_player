@@ -89,9 +89,9 @@ class _ReprodutorState extends State<Reprodutor> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     AddazButton(
-                      Icons.arrow_back,
-                      30,
-                      () {
+                      icone: Icons.arrow_back,
+                      tamanho: 30,
+                      onPress: () {
                         //_cha1ngePlayerViewVisibility();
                       },
                     ),
@@ -145,11 +145,9 @@ class _ReprodutorState extends State<Reprodutor> {
                         // ),
                       ),
                     ),
-                    Container(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(1000),
-                        child: Image.asset('images/circle.png', scale: 2),
-                      ),
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(1000),
+                      child: Image.asset('images/circle.png', scale: 2),
                     ),
                   ],
                 ),
@@ -212,11 +210,15 @@ class _ReprodutorState extends State<Reprodutor> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       //Prev Button
-                      AddazButton(Icons.skip_previous, 70, () {
-                        if (_player.hasPrevious) {
-                          _player.seekToPrevious();
-                        }
-                      }),
+                      AddazButton(
+                        icone: Icons.skip_previous,
+                        tamanho: 70,
+                        onPress: () {
+                          if (_player.hasPrevious) {
+                            _player.seekToPrevious();
+                          }
+                        },
+                      ),
                       //Play/Pause
                       Flexible(
                         child: InkWell(
@@ -270,11 +272,14 @@ class _ReprodutorState extends State<Reprodutor> {
                         ),
                       ),
                       // Next Button
-                      AddazButton(Icons.skip_next, 70, () {
-                        if (_player.hasPrevious) {
-                          _player.seekToNext();
-                        }
-                      }),
+                      AddazButton(
+                          icone: Icons.skip_next,
+                          tamanho: 70,
+                          onPress: () {
+                            if (_player.hasPrevious) {
+                              _player.seekToNext();
+                            }
+                          }),
                     ],
                   ),
                 ),
@@ -287,9 +292,9 @@ class _ReprodutorState extends State<Reprodutor> {
                     children: [
                       //Shuffle Button
                       AddazButton(
-                        Icons.shuffle,
-                        40,
-                        () {
+                        icone: Icons.shuffle,
+                        tamanho: 40,
+                        onPress: () {
                           if (isShuf == false) {
                             isShuf = true;
                             _player.setShuffleModeEnabled(true);
